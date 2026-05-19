@@ -1,0 +1,2 @@
+import { Request,Response } from "express"; import { User } from "../models/User"; import { Report } from "../models/Report";
+export const adminSummary=async(_req:Request,res:Response)=>{const [pendingVerifications,openReports,bannedUsers,totalUsers]=await Promise.all([User.countDocuments({verificationStatus:"pending"}),Report.countDocuments({status:"open"}),User.countDocuments({isBanned:true}),User.countDocuments({})]); res.json({success:true,message:"Admin",data:{pendingVerifications,openReports,bannedUsers,totalUsers}});};

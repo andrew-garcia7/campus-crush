@@ -1,0 +1,46 @@
+{
+  "name": "campus-crush-server",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "seed": "tsx scripts/seedUsers.ts",
+    "seed:events": "tsx scripts/seedEvents.ts",
+    "seed:confessions": "tsx scripts/seedConfessions.ts",
+    "seed:coaches": "tsx scripts/seedCoaches.ts"
+  },
+  "dependencies": {
+    "@aws-sdk/client-rekognition": "^3.1048.0",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/morgan": "^1.9.10",
+    "@types/multer": "^1.4.13",
+    "@types/node": "^22.8.1",
+    "@types/nodemailer": "^8.0.0",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.7.2",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.10.1",
+    "openai": "^4.68.1",
+    "razorpay": "^2.9.5",
+    "socket.io": "^4.8.0",
+    "stripe": "^17.2.1",
+    "tesseract.js": "^7.0.0",
+    "twilio": "^5.3.6",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3"
+  }
+}

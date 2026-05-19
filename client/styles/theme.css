@@ -1,0 +1,177 @@
+:root {
+  /* ── Fonts ─────────────────────────────────────────────────── */
+  --font-body: var(--font-inter);
+  --font-display: var(--font-poppins);
+  --font-script: var(--font-script-face);
+
+  /* ── Text ──────────────────────────────────────────────────── */
+  --text-primary:      #2D1810;
+  --text-soft:         rgba(45, 24, 16, 0.82);
+  --text-muted:        rgba(45, 24, 16, 0.52);
+  --text-placeholder:  rgba(45, 24, 16, 0.30);
+
+  /* ── Surface / chrome ──────────────────────────────────────── */
+  --surface-bg:        #FFF8F0;
+  --surface-card:      #FFFFFF;
+  --surface-panel:     #FDF5EE;
+  --surface-overlay:   rgba(255, 248, 240, 0.94);
+  --surface-hover:     rgba(255, 45, 120, 0.05);
+  --surface-active:    rgba(255, 45, 120, 0.09);
+  --surface-border:    rgba(255, 182, 193, 0.38);
+  --surface-border-focus: #FF2D78;
+  --surface-rose:      rgba(255, 45, 120, 0.06);
+  --surface-input:     rgba(255, 255, 255, 0.96);
+  --bg-orb-1:          rgba(255, 207, 224, 0.45);
+  --bg-orb-2:          rgba(253, 215, 240, 0.38);
+  --bg-orb-3:          rgba(255, 236, 210, 0.40);
+  --bg-orb-4:          rgba(238, 210, 255, 0.30);
+  --bg-grid:           rgba(255, 45, 120, 0.03);
+
+  /* ── Nav ───────────────────────────────────────────────────── */
+  --nav-bg:            rgba(255, 255, 255, 0.96);
+  --nav-border:        rgba(255, 182, 193, 0.32);
+  --nav-icon:          rgba(45, 24, 16, 0.38);
+  --nav-icon-active:   #FF2D78;
+  --nav-text:          rgba(45, 24, 16, 0.58);
+  --nav-text-active:   #2D1810;
+  --nav-dot:           #FF2D78;
+
+  /* ── Brand gradients ─────────────────────────────────────────── */
+  --grad-primary:      linear-gradient(135deg, #FF2D78 0%, #FF7BAC 100%);
+  --grad-gold:         linear-gradient(135deg, #F59E0B 0%, #FCD34D 100%);
+  --grad-rose:         linear-gradient(135deg, #FF2D78 0%, #BE185D 100%);
+
+  /* ── Accent colors ─────────────────────────────────────────── */
+  --accent-fuchsia:    #FF2D78;
+  --accent-purple:     #7C3AED;
+  --accent-gold:       #F59E0B;
+  --accent-rose:       #FF2D78;
+
+  /* ── Shadows ───────────────────────────────────────────────── */
+  --shadow-panel:    0 8px 40px rgba(45, 24, 16, 0.08);
+  --shadow-soft:     0 4px 24px rgba(45, 24, 16, 0.07);
+  --shadow-card:     0 2px 16px rgba(45, 24, 16, 0.06);
+  --shadow-glow:     0 0 24px rgba(255, 45, 120, 0.22);
+
+  /* ── Scrollbar ─────────────────────────────────────────────── */
+  --scrollbar-thumb: rgba(255, 45, 120, 0.18);
+  --scrollbar-hover: rgba(255, 45, 120, 0.30);
+
+  /* ── Nav rail dimensions ───────────────────────────────────── */
+  --nav-rail-w: 260px;
+  --nav-rail-w-compact: 68px;
+  --right-panel-w: 300px;
+  --header-h: 0px;
+}
+
+html::before {
+	content: "";
+	position: fixed;
+	inset: 0;
+	pointer-events: none;
+	z-index: -1;
+	opacity: 0.22;
+	background-image:
+		radial-gradient(circle at 15% 18%, rgba(255, 249, 241, 0.12) 0, transparent 16%),
+		radial-gradient(circle at 84% 22%, rgba(251, 207, 232, 0.1) 0, transparent 14%),
+		radial-gradient(circle at 74% 78%, rgba(233, 213, 255, 0.08) 0, transparent 15%),
+		linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.02) 45%, transparent 100%);
+}
+
+body::after {
+	content: "";
+	position: fixed;
+	inset: 0;
+	pointer-events: none;
+	z-index: -1;
+	opacity: 0.08;
+	background-image:
+		linear-gradient(rgba(255, 249, 241, 0.05) 1px, transparent 1px),
+		linear-gradient(90deg, rgba(255, 249, 241, 0.05) 1px, transparent 1px);
+	background-size: 120px 120px;
+	mask-image: radial-gradient(circle at center, black 36%, transparent 88%);
+}
+
+::selection {
+	background: rgba(251, 207, 232, 0.32);
+	color: #fff9fb;
+}
+
+/* ─── Light mode ────────────────────────────────────────────── */
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* Text */
+  --text-primary:      #1a0b2e;
+  --text-soft:         rgba(26, 11, 46, 0.82);
+  --text-muted:        rgba(100, 60, 130, 0.68);
+  --text-placeholder:  rgba(120, 80, 150, 0.40);
+
+  /* Surfaces */
+  --surface-bg:        #f5efff;
+  --surface-card:      rgba(104, 73, 150, 0.18);
+  --surface-panel:     rgba(85, 54, 126, 0.24);
+  --surface-overlay:   rgba(26, 11, 46, 0.55);
+  --surface-hover:     rgba(122, 82, 186, 0.10);
+  --surface-active:    rgba(147, 51, 234, 0.15);
+  --surface-border:    rgba(116, 74, 177, 0.18);
+  --surface-border-focus: rgba(147, 51, 234, 0.50);
+  --surface-rose:      rgba(233, 213, 255, 0.22);
+  --surface-input:     rgba(255, 255, 255, 0.74);
+  --bg-orb-1:          rgba(167, 139, 250, 0.18);
+  --bg-orb-2:          rgba(236, 170, 230, 0.15);
+  --bg-orb-3:          rgba(253, 230, 138, 0.12);
+  --bg-orb-4:          rgba(216, 180, 254, 0.10);
+  --bg-grid:           rgba(120, 60, 160, 0.035);
+
+  /* Nav */
+  --nav-bg:            rgba(250, 244, 255, 0.88);
+  --nav-border:        rgba(147, 51, 234, 0.12);
+  --nav-icon:          rgba(120, 60, 160, 0.52);
+  --nav-icon-active:   #7c3aed;
+  --nav-text:          rgba(90, 40, 120, 0.72);
+  --nav-text-active:   #1a0b2e;
+  --nav-dot:           #7c3aed;
+
+  /* Shadows */
+  --shadow-panel:    0 22px 70px rgba(84, 42, 140, 0.14);
+  --shadow-soft:     0 14px 36px rgba(84, 42, 140, 0.12);
+  --shadow-card:     0 8px 32px rgba(84, 42, 140, 0.16);
+  --shadow-glow:     0 0 28px rgba(147, 51, 234, 0.22);
+
+  /* Scrollbar */
+  --scrollbar-thumb: rgba(147, 51, 234, 0.22);
+  --scrollbar-hover: rgba(147, 51, 234, 0.40);
+}
+
+[data-theme="light"] body {
+  background-image:
+    radial-gradient(ellipse 52% 38% at 12% 0%,  rgba(196, 130, 255, 0.20) 0%, transparent 58%),
+    radial-gradient(ellipse 42% 28% at 88% 12%, rgba(236, 170, 230, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse 48% 34% at 50% 100%,rgba(253, 230, 138, 0.10) 0%, transparent 52%),
+    linear-gradient(180deg, #ede9fe 0%, #fdf4ff 45%, #fce7f3 100%);
+  color: var(--text-primary);
+}
+
+[data-theme="light"] html::before {
+  background-image:
+    radial-gradient(circle at 15% 18%, rgba(167, 139, 250, 0.14) 0, transparent 18%),
+    radial-gradient(circle at 84% 22%, rgba(236, 170, 230, 0.10) 0, transparent 16%),
+    radial-gradient(circle at 74% 78%, rgba(196, 130, 255, 0.08) 0, transparent 15%),
+    linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.04) 45%, transparent 100%);
+  opacity: 0.35;
+}
+
+[data-theme="light"] body::after {
+  background-image:
+    linear-gradient(rgba(120, 60, 160, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120, 60, 160, 0.04) 1px, transparent 1px);
+  opacity: 0.12;
+}
+
+/* ─── Smooth transition for all theme-sensitive properties ───── */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color, box-shadow, opacity;
+  transition-duration: 0.22s;
+  transition-timing-function: ease;
+}

@@ -1,0 +1,192 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import "../styles/theme.css";
+
+:root {
+  color-scheme: light;
+  --nav-rail-w: 260px;
+  --nav-rail-w-compact: 68px;
+  --right-panel-w: 300px;
+  --header-h: 0px;
+}
+
+/* ─── Base reset ────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+a, button {
+  touch-action: manipulation;
+}
+
+html {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
+body {
+  font-family: var(--font-body), system-ui, sans-serif;
+  @apply bg-background min-h-screen;
+  background-color: #FFF8F0;
+  overscroll-behavior-y: none;
+  color: var(--text-primary);
+}
+
+/* ─── Typography helpers ────────────────────────────────────── */
+.font-display  { font-family: var(--font-display), sans-serif; font-weight: 600; }
+.font-body     { font-family: var(--font-body), sans-serif; }
+.font-script   { font-family: var(--font-script), cursive; font-weight: 400; letter-spacing: 0; }
+
+.editorial-title {
+  font-family: var(--font-script), cursive;
+  color: var(--text-primary);
+  line-height: 0.95;
+  text-shadow: 0 10px 35px rgba(16, 5, 15, 0.22);
+}
+
+.editorial-subtitle {
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ─── Glass card ────────────────────────────────────────────── */
+.glass-card {
+  @apply bg-white rounded-[24px];
+  border: 1px solid rgba(255, 182, 193, 0.32);
+  box-shadow: 0 4px 24px rgba(45, 24, 16, 0.07);
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(255, 182, 193, 0.28);
+  box-shadow: 0 2px 16px rgba(45, 24, 16, 0.05);
+}
+
+.editorial-card {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--surface-card) 96%, transparent), color-mix(in srgb, var(--surface-panel) 94%, transparent));
+  border: 1px solid color-mix(in srgb, var(--surface-border) 88%, var(--accent-gold) 12%);
+  box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255, 249, 241, 0.05);
+  backdrop-filter: blur(14px);
+}
+
+[data-theme="light"] .editorial-card {
+  box-shadow: 0 20px 38px rgba(95, 60, 150, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.editorial-chip {
+  background: var(--surface-hover);
+  border: 1px solid color-mix(in srgb, var(--surface-border) 80%, var(--accent-gold) 20%);
+  color: var(--text-primary);
+}
+
+.luxury-input {
+  background: var(--surface-input);
+  border: 1px solid color-mix(in srgb, var(--surface-border) 96%, transparent);
+  color: var(--text-primary);
+  box-shadow: inset 0 1px 0 rgba(255, 249, 241, 0.04);
+}
+
+/* ─── Float animation (replaces Framer infinite on Floating component) ─── */
+@keyframes cc-float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+
+/* ─── Scrollbar ─────────────────────────────────────────────── */
+.scrollbar-hide                    { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+
+::-webkit-scrollbar       { width: 3px; height: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-hover); }
+
+/* ─── Nav rail active pill ──────────────────────────────────── */
+.nav-item-active {
+  background: linear-gradient(135deg, rgba(255, 45, 120, 0.10) 0%, rgba(255, 45, 120, 0.07) 100%);
+  border: 1px solid rgba(255, 45, 120, 0.20);
+  box-shadow: 0 2px 12px rgba(255, 45, 120, 0.10);
+}
+
+/* ─── Text glow ─────────────────────────────────────────────── */
+.neon-text {
+  text-shadow: 0 0 20px color-mix(in srgb, var(--accent-gold) 16%, transparent), 0 0 38px color-mix(in srgb, var(--accent-rose) 14%, transparent);
+}
+
+/* ─── Premium gradient button ───────────────────────────────── */
+.btn-premium {
+  background: linear-gradient(135deg, #f4d8e8 0%, #efc5dd 38%, #e6c57d 100%);
+  color: #2a132f;
+  box-shadow: 0 12px 30px rgba(231, 184, 164, 0.18);
+  transition: box-shadow 0.2s, transform 0.15s;
+}
+.btn-premium:hover  { box-shadow: 0 16px 36px rgba(231, 184, 164, 0.24); transform: translateY(-1px); }
+.btn-premium:active { transform: translateY(0); box-shadow: 0 8px 18px rgba(231, 184, 164, 0.16); }
+
+/* ─── Safe area for mobile bottom nav ──────────────────────── */
+.pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+
+/* ─── Leaflet map – fix Tailwind base-reset conflicts ───────── */
+/* Tailwind preflight sets img { max-width: 100%; height: auto; display: block; }
+   which breaks Leaflet tile rendering. Only max-width needs overriding here. */
+.leaflet-container img {
+  max-width: none !important;
+  max-height: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+}
+.leaflet-container {
+  background: #e8ecf0;
+  z-index: 0;
+}
+.leaflet-campus-tooltip {
+  background: #fff;
+  border: 1px solid #fce7f3;
+  border-radius: 10px;
+  padding: 4px 10px;
+  color: #2D1810;
+  font-size: 12px;
+  box-shadow: 0 2px 8px rgba(255,45,120,0.12);
+}
+
+/* ─── Slide-in drawer for tablet right panel ────────────────── */
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: var(--surface-overlay);
+  backdrop-filter: blur(2px);
+}
+
+/* ─── Smooth page transitions ───────────────────────────────── */
+.page-enter  { animation: pageIn 0.22s ease-out; }
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Performance optimizations ─────────────────────────────── */
+/* Promote scrollable areas to own GPU layer for smoother scroll */
+html, body {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent layout thrash during tap/hover — let transitions be GPU-driven */
+a, button, [role="button"] {
+  -webkit-tap-highlight-color: transparent;
+  tap-highlight-color: transparent;
+}
+
+/* Reduce motion for users who prefer it (accessibility + perf) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

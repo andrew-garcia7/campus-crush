@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 320" width="400" height="320">
+  <defs>
+    <!-- Ambient background glow -->
+    <radialGradient id="bg-glow" cx="50%" cy="45%" r="50%">
+      <stop offset="0%"   stop-color="#fde8f4" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#fff5fb" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Bird 1 – blush to rose gold -->
+    <linearGradient id="b1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#f9bfda"/>
+      <stop offset="100%" stop-color="#c9747e"/>
+    </linearGradient>
+
+    <!-- Bird 2 – lavender to blush -->
+    <linearGradient id="b2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#d8b4f8"/>
+      <stop offset="100%" stop-color="#e89bbf"/>
+    </linearGradient>
+
+    <!-- Heart gradient -->
+    <linearGradient id="heart-g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#f875a8"/>
+      <stop offset="60%"  stop-color="#d4607a"/>
+      <stop offset="100%" stop-color="#c97ca0"/>
+    </linearGradient>
+
+    <!-- Soft glow filter -->
+    <filter id="glow-sm" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow-heart" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <!-- Text gradient for "Campus" -->
+    <linearGradient id="text-g" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#c9747e"/>
+      <stop offset="50%"  stop-color="#e8a4c4"/>
+      <stop offset="100%" stop-color="#b884c0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Ambient glow background -->
+  <ellipse cx="200" cy="140" rx="160" ry="130" fill="url(#bg-glow)"/>
+
+  <!-- Subtle ring behind birds -->
+  <circle cx="200" cy="140" r="80" stroke="#f4c2da" stroke-width="0.8" fill="none" opacity="0.4"/>
+  <circle cx="200" cy="140" r="100" stroke="#e4aed0" stroke-width="0.5" fill="none" opacity="0.25"/>
+
+  <!-- ── Bird 1 (left, blush/rose-gold, facing right) ───────────────────── -->
+  <g transform="translate(115,140) scale(1.6)" filter="url(#glow-sm)">
+    <!-- Body -->
+    <path d="M 14,0 C 10,-4 4,-6 -6,-4 C -10,-2 -12,0 -10,3 C -6,5 0,4 6,3 C 10,2 12,1 14,0 Z"
+          fill="url(#b1)"/>
+    <!-- Upper wing -->
+    <path d="M 2,-2 C -2,-10 -8,-13 -12,-10 C -10,-8 -6,-5 -2,-2 Z"
+          fill="url(#b1)" opacity="0.9"/>
+    <!-- Lower wing -->
+    <path d="M 2,2 C -2,10 -8,13 -12,10 C -10,8 -6,5 -2,2 Z"
+          fill="url(#b1)" opacity="0.65"/>
+    <!-- Beak -->
+    <path d="M 14,-0.5 L 21,0 L 14,0.5 Z" fill="#e8d0d8"/>
+    <!-- Tail fan -->
+    <path d="M -10,2 C -15,0 -19,3 -17,6 C -15,8 -11,6 -10,3 Z M -10,-2 C -15,0 -19,-3 -17,-6 C -15,-8 -11,-6 -10,-3 Z"
+          fill="url(#b1)" opacity="0.75"/>
+    <!-- Wing highlight -->
+    <ellipse cx="-4" cy="-3" rx="2.5" ry="1" fill="white" opacity="0.28" transform="rotate(-25)"/>
+  </g>
+
+  <!-- ── Bird 2 (right, lavender, mirrored/facing left) ────────────────── -->
+  <g transform="translate(285,140) scale(-1.6,1.6)" filter="url(#glow-sm)">
+    <path d="M 14,0 C 10,-4 4,-6 -6,-4 C -10,-2 -12,0 -10,3 C -6,5 0,4 6,3 C 10,2 12,1 14,0 Z"
+          fill="url(#b2)"/>
+    <path d="M 2,-2 C -2,-10 -8,-13 -12,-10 C -10,-8 -6,-5 -2,-2 Z"
+          fill="url(#b2)" opacity="0.9"/>
+    <path d="M 2,2 C -2,10 -8,13 -12,10 C -10,8 -6,5 -2,2 Z"
+          fill="url(#b2)" opacity="0.65"/>
+    <path d="M 14,-0.5 L 21,0 L 14,0.5 Z" fill="#e0d0e8"/>
+    <path d="M -10,2 C -15,0 -19,3 -17,6 C -15,8 -11,6 -10,3 Z M -10,-2 C -15,0 -19,-3 -17,-6 C -15,-8 -11,-6 -10,-3 Z"
+          fill="url(#b2)" opacity="0.75"/>
+    <ellipse cx="-4" cy="-3" rx="2.5" ry="1" fill="white" opacity="0.28" transform="rotate(-25)"/>
+  </g>
+
+  <!-- ── Heart at center ────────────────────────────────────────────────── -->
+  <g transform="translate(200,132) scale(2)" filter="url(#glow-heart)">
+    <path d="M 0,8 C -2,6 -12,-2 -12,-8 C -12,-14 -6,-18 0,-12 C 6,-18 12,-14 12,-8 C 12,-2 2,6 0,8 Z"
+          fill="url(#heart-g)"/>
+    <!-- Heart shine -->
+    <ellipse cx="-3" cy="-8" rx="3" ry="2" fill="white" opacity="0.32" transform="rotate(-20,-3,-8)"/>
+  </g>
+
+  <!-- ── Sparkle particles ───────────────────────────────────────────────── -->
+  <g transform="translate(200,128)">
+    <g transform="translate(42,0)"  opacity="0.85">
+      <path d="M0,-4 L3,0 L0,4 L-3,0 Z" fill="#fde6f7" stroke="#d4607a" stroke-width="0.4"/>
+    </g>
+    <g transform="translate(-42,0)" opacity="0.85">
+      <path d="M0,-4 L3,0 L0,4 L-3,0 Z" fill="#fde6f7" stroke="#d4607a" stroke-width="0.4"/>
+    </g>
+    <g transform="translate(0,-45)" opacity="0.85">
+      <path d="M0,-3.5 L2.5,0 L0,3.5 L-2.5,0 Z" fill="#f4c2da" stroke="#c9747e" stroke-width="0.4"/>
+    </g>
+    <g transform="translate(30,-32)" opacity="0.75">
+      <circle r="2.5" fill="#d8b4f8" opacity="0.9"/>
+    </g>
+    <g transform="translate(-30,-32)" opacity="0.75">
+      <circle r="2.5" fill="#f9bfda" opacity="0.9"/>
+    </g>
+    <g transform="translate(30,32)" opacity="0.75">
+      <circle r="2" fill="#e8a4c4" opacity="0.9"/>
+    </g>
+    <g transform="translate(-30,32)" opacity="0.75">
+      <circle r="2" fill="#c8a4e0" opacity="0.9"/>
+    </g>
+    <g transform="translate(0,44)" opacity="0.7">
+      <path d="M0,-3 L2,0 L0,3 L-2,0 Z" fill="#f9bfda" stroke="#c9747e" stroke-width="0.3"/>
+    </g>
+  </g>
+
+  <!-- Tiny stars / shine dots -->
+  <g opacity="0.55">
+    <circle cx="148" cy="90"  r="1.5" fill="#f4d4e8"/>
+    <circle cx="252" cy="88"  r="1.5" fill="#d8c4f0"/>
+    <circle cx="165" cy="170" r="1.2" fill="#f4c2da"/>
+    <circle cx="238" cy="172" r="1.2" fill="#d0b8ec"/>
+    <circle cx="200" cy="72"  r="2"   fill="white" opacity="0.7"/>
+  </g>
+
+  <!-- ── Typography ──────────────────────────────────────────────────────── -->
+  <!-- "Campus" in script style -->
+  <text x="200" y="238"
+        font-family="'Great Vibes','Dancing Script','Pinyon Script',cursive"
+        font-size="62"
+        text-anchor="middle"
+        fill="url(#text-g)"
+        letter-spacing="1">Campus</text>
+
+  <!-- "Crush" in clean modern -->
+  <text x="200" y="268"
+        font-family="'Inter','Poppins','Helvetica Neue',sans-serif"
+        font-size="22"
+        font-weight="300"
+        letter-spacing="10"
+        text-anchor="middle"
+        fill="#9b6b8a"
+        opacity="0.88">CRUSH</text>
+
+  <!-- Thin decorative line under text -->
+  <line x1="152" y1="276" x2="248" y2="276" stroke="url(#text-g)" stroke-width="0.6" opacity="0.5"/>
+</svg>

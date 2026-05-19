@@ -1,0 +1,1 @@
+// Legacy placeholder to avoid 404 noise from stale asset requests.

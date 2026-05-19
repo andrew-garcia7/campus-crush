@@ -1,0 +1,2 @@
+import OpenAI from "openai"; import { env } from "../config/env"; const client=new OpenAI({apiKey:env.OPENAI_API_KEY});
+export const askCupidAI=async(prompt:string,emergency=false)=>{const completion=await client.chat.completions.create({model:"gpt-4o-mini",messages:[{role:"system",content: emergency?"Emergency dating advisor":"Relationship coach"},{role:"user",content:prompt}]}); return completion.choices[0]?.message?.content||"Need more context";};

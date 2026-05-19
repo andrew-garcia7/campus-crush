@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="8" y1="6" x2="54" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#261036"/>
+      <stop offset="0.52" stop-color="#43155F"/>
+      <stop offset="1" stop-color="#170920"/>
+    </linearGradient>
+    <linearGradient id="heart" x1="18" y1="17" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F9D8E7"/>
+      <stop offset="0.55" stop-color="#F472B6"/>
+      <stop offset="1" stop-color="#D946EF"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="24" y1="10" x2="42" y2="28" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FDE68A"/>
+      <stop offset="1" stop-color="#F9A8D4"/>
+    </linearGradient>
+    <filter id="blur" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="3.2"/>
+    </filter>
+  </defs>
+
+  <rect x="4" y="4" width="56" height="56" rx="18" fill="url(#bg)"/>
+  <rect x="4.75" y="4.75" width="54.5" height="54.5" rx="17.25" stroke="#F7E7B229"/>
+
+  <circle cx="44" cy="19" r="9" fill="#FDE68A" opacity="0.15" filter="url(#blur)"/>
+  <circle cx="21" cy="48" r="10" fill="#D946EF" opacity="0.16" filter="url(#blur)"/>
+
+  <path d="M31.989 45.45c-.407 0-.814-.146-1.136-.438l-9.54-8.616c-2.255-2.055-3.53-4.221-3.53-6.995 0-4.075 2.95-7.031 6.934-7.031 2.27 0 4.156 1.025 5.272 2.68 1.115-1.655 3.016-2.68 5.272-2.68 3.984 0 6.949 2.956 6.949 7.03 0 2.775-1.29 4.941-3.546 6.996l-9.54 8.616a1.68 1.68 0 0 1-1.135.438Z" fill="url(#heart)"/>
+  <path d="M31.958 21.28c1.08-3.56 3.813-5.326 7.115-5.326 1.148 0 2.01.97 1.79 2.088-.555 2.81-2.81 4.982-6.826 5.946-.945.228-1.917-.311-2.195-1.233-.148-.49-.105-1.023.116-1.475Z" fill="url(#glow)"/>
+
+  <path d="M47.5 17.4a1.1 1.1 0 1 0 0-2.2 1.1 1.1 0 0 0 0 2.2Z" fill="#FFF8FB"/>
+  <path d="M14.7 20.6a.95.95 0 1 0 0-1.9.95.95 0 0 0 0 1.9Z" fill="#FFF8FB" opacity="0.7"/>
+  <path d="M51.6 28.9a.8.8 0 1 0 0-1.6.8.8 0 0 0 0 1.6Z" fill="#FFF8FB" opacity="0.72"/>
+</svg>

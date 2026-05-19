@@ -1,0 +1,31 @@
+import { Router } from "express";
+import authRoutes from "./auth.routes";
+import discoverRoutes from "./discover.routes";
+import chatRoutes from "./chat.routes";
+import aiRoutes from "./ai.routes";
+import paymentRoutes from "./payment.routes";
+import confessionRoutes from "./confession.routes";
+import adminRoutes from "./admin.routes";
+import verificationRoutes from "./verification.routes";
+import coachRoutes from "./coach.routes";
+import mapRoutes from "./map.routes";
+import uploadRoutes from "./upload.routes";
+import eventsRoutes from "./events.routes";
+import campusRoutes from "./campus.routes";
+
+const r = Router();
+r.use("/auth", authRoutes);
+r.use("/discover", discoverRoutes);
+r.use("/chat", chatRoutes);
+r.use("/ai", aiRoutes);
+r.use("/payments", paymentRoutes);
+r.use("/confessions", confessionRoutes);
+r.use("/admin", adminRoutes);
+r.use("/verification", verificationRoutes);
+r.use("/coaches", coachRoutes);
+r.use("/map", mapRoutes);
+r.use("/uploads", uploadRoutes);
+r.use("/events", eventsRoutes);
+r.use("/campus", campusRoutes);
+
+export default r;

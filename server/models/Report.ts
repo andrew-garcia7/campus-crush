@@ -1,0 +1,1 @@
+import mongoose,{Schema} from "mongoose"; const schema=new Schema({reporterId:{type:Schema.Types.ObjectId,ref:"User"},targetUserId:{type:Schema.Types.ObjectId,ref:"User"},reason:String,status:{type:String,default:"open"}},{timestamps:true}); export const Report=mongoose.model("Report",schema);

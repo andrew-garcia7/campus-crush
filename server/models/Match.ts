@@ -1,0 +1,1 @@
+import mongoose,{Schema} from "mongoose"; const schema=new Schema({users:[{type:Schema.Types.ObjectId,ref:"User"}],university:String,matchedAt:{type:Date,default:Date.now}},{timestamps:true}); export const Match=mongoose.model("Match",schema);
