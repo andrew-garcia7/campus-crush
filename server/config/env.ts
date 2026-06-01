@@ -27,6 +27,8 @@ export const env = {
   SMTP_PORT: Number(process.env.SMTP_PORT || 587),
   SMTP_USER: process.env.SMTP_USER || "",
   SMTP_PASS: process.env.SMTP_PASS || "",
+  RESEND_API_KEY: process.env.RESEND_API_KEY || "",
+  RESEND_FROM_EMAIL: process.env.RESEND_FROM_EMAIL || "Campus Crush <onboarding@resend.dev>",
   // AWS Rekognition — required for face detection on selfies and student IDs.
   // If not set, face validation is skipped (OCR still runs).
   AWS_ACCESS_KEY: process.env.AWS_ACCESS_KEY || "",
