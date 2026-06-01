@@ -28,13 +28,6 @@ import { loadRazorpayScript } from "@/hooks/use-razorpay";
 import { PaymentSuccess } from "@/components/ui/payment-success";
 import { PaymentReceipt, type ReceiptData } from "@/components/ui/payment-receipt";
 
-const UPI_APP_MAP: Record<UpiApp, string> = {
-  gpay:    "google_pay",
-  phonepe: "phonepe",
-  paytm:   "paytm",
-  upi:     "google_pay",
-};
-
 declare global {
   interface Window {
     Razorpay: any;
@@ -163,25 +156,15 @@ export function CoachProfileModal({ coach, onClose }: Props) {
         name: "Campus Crush",
         description: `Session with ${coach.name}`,
         order_id: order.orderId,
-        prefill: { name: user?.fullName || "", email: user?.email || "" },
+        prefill: {
+          name:  user?.fullName || user?.name || "",
+          email: user?.email || "",
+          // Pre-select UPI tab when user has chosen a UPI method.
+          // Removing config.display.blocks avoids forcing UPI intent (deep-links
+          // to real apps) which always fails in Razorpay test mode.
+          ...(selectedUpiMethod ? { method: "upi" } : {}),
+        },
         theme: { color: "#9333ea" },
-        config: selectedUpiMethod ? {
-          display: {
-            blocks: {
-              upi_block: {
-                name: "Pay via UPI",
-                instruments: [
-                  { method: "upi", flows: ["intent"], apps: [UPI_APP_MAP[selectedUpiMethod]] },
-                  { method: "upi", flows: ["intent"], apps: ["google_pay", "phonepe", "paytm"] },
-                  { method: "upi", flows: ["collect"] },
-                ],
-              },
-              other_block: { name: "Other Methods", instruments: [{ method: "card" }, { method: "netbanking" }, { method: "wallet" }] },
-            },
-            sequence: ["block.upi_block", "block.other_block"],
-            preferences: { show_default_blocks: false },
-          },
-        } : undefined,
         handler: async (response: any) => {
           try {
             await api.post(`/coaches/${coach._id}/verify-payment`, {

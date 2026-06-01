@@ -1,7 +1,12 @@
 node_modules/
 .env
+.env.local
+.env.production.local
+.env.development.local
+.env.test.local
 .next/
 dist/
 build/
 uploads/
 *.log
+.vercel/

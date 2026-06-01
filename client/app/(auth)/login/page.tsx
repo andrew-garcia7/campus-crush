@@ -54,6 +54,14 @@ export default function LoginPage() {
         err?.code === "auth/popup-closed-by-user" ||
         err?.code === "auth/cancelled-popup-request"
       ) return;
+      if (err?.code === "auth/unauthorized-domain") {
+        toast({
+          title: "Domain not authorized",
+          message: "This domain is not allowed for Google sign-in. Add it to Firebase Console → Authentication → Authorized Domains.",
+          variant: "error",
+        });
+        return;
+      }
       toast({
         title: "Google login failed",
         message: err?.response?.data?.message || err?.message || "Please try again.",

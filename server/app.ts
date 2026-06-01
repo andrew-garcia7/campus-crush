@@ -9,26 +9,37 @@ import { uploadsRoot } from "./utils/uploads-path";
 
 export const app = express();
 
-const allowedOrigins = new Set([
+// Static allow-list: localhost variants + the CLIENT_URL env var
+const allowedOriginSet = new Set([
 	env.CLIENT_URL,
 	"http://localhost:3000",
 	"http://localhost:3001",
 	"http://localhost:3002",
 	"http://127.0.0.1:3000",
 	"http://127.0.0.1:3001",
-	"http://127.0.0.1:3002"
+	"http://127.0.0.1:3002",
 ].filter(Boolean));
+
+// Regex patterns for dynamic origins (Vercel preview + production deployments)
+const allowedOriginPatterns = [
+	/^https:\/\/[a-z0-9-]+-[a-z0-9]+-[a-z0-9-]+\.vercel\.app$/,  // preview: project-hash-team.vercel.app
+	/^https:\/\/[a-z0-9-]+\.vercel\.app$/,                         // production: project.vercel.app
+];
+
+function isOriginAllowed(origin: string): boolean {
+	if (allowedOriginSet.has(origin)) return true;
+	return allowedOriginPatterns.some(re => re.test(origin));
+}
 
 app.use(
 	cors({
 		credentials: true,
 		origin(origin, callback) {
-			if (!origin || allowedOrigins.has(origin)) {
-				return callback(null, true);
-			}
-
+			// Allow server-to-server or same-origin requests
+			if (!origin) return callback(null, true);
+			if (isOriginAllowed(origin)) return callback(null, true);
 			return callback(new Error(`CORS blocked for origin: ${origin}`));
-		}
+		},
 	})
 );
 app.use(express.json({ limit: "5mb" }));

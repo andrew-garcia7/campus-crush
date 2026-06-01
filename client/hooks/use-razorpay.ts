@@ -18,13 +18,6 @@ export interface RzpSuccessData {
 
 export type PreferredUpiApp = "gpay" | "phonepe" | "paytm" | "upi" | null;
 
-const UPI_APP_MAP: Record<NonNullable<PreferredUpiApp>, string> = {
-  gpay:    "google_pay",
-  phonepe: "phonepe",
-  paytm:   "paytm",
-  upi:     "google_pay", // fallback: open UPI intent list
-};
-
 interface OpenCheckoutOpts {
   userId:           string;
   plan:             RzpPlan;
@@ -89,41 +82,17 @@ export function useRazorpay() {
         order_id:    orderId,
         image:       "/assets/cc-logo.png",
 
-        // UPI-first payment config
-        config: {
-          display: {
-            blocks: {
-              upi_block: {
-                name: "Pay via UPI",
-                instruments: [
-                  // Bump preferred app to the top of intent list
-                  ...(opts.preferredMethod && opts.preferredMethod !== "upi"
-                    ? [{ method: "upi", flows: ["intent"], apps: [UPI_APP_MAP[opts.preferredMethod]] }]
-                    : []
-                  ),
-                  { method: "upi", flows: ["intent"], apps: ["google_pay", "phonepe", "paytm"] },
-                  { method: "upi", flows: ["collect"] },
-                  { method: "upi", flows: ["qr"] },
-                ],
-              },
-              other_block: {
-                name: "Other Methods",
-                instruments: [
-                  { method: "card" },
-                  { method: "netbanking" },
-                  { method: "wallet" },
-                ],
-              },
-            },
-            sequence: ["block.upi_block", "block.other_block"],
-            preferences: { show_default_blocks: false },
-          },
-        },
-
         prefill: {
           name:    opts.userName  ?? "",
           email:   opts.userEmail ?? "",
           contact: opts.userPhone ?? "",
+          // Pre-select UPI tab when user picked a UPI method on Campus Crush UI.
+          // We do NOT use config.display.blocks here because that custom-block
+          // feature forces UPI intent (deep-link to real apps), which always
+          // fails in Razorpay test mode. Razorpay's standard checkout already
+          // shows UPI, Cards, Netbanking and Wallets — and in test mode it
+          // surfaces a prominent "Test Mode" banner with test credentials.
+          ...(opts.preferredMethod ? { method: "upi" } : {}),
         },
 
         theme: { color: "#7c3aed" },

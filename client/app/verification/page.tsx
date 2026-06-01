@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -219,6 +219,25 @@ export default function VerificationPage() {
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  // Prevents React Strict Mode double-getUserMedia race — see camera useEffect below
+  const cameraInitLockRef = useRef(false);
+
+  /**
+   * Callback ref for the <video> element.
+   * Framer Motion animates height: 0 → "auto" by measuring the element at mount time.
+   * Before a stream is attached the video has 0px intrinsic height, so Framer Motion
+   * measures 0 and animates 0→0 (video stays invisible).
+   * Using a callback ref means we also assign srcObject the instant the element
+   * appears in the DOM, even if getUserMedia has already resolved.
+   */
+  const setVideoRef = useCallback((node: HTMLVideoElement | null) => {
+    videoRef.current = node;
+    if (node && streamRef.current) {
+      console.log("[Camera] video element mounted after stream ready — assigning srcObject");
+      node.srcObject = streamRef.current;
+      node.play().catch((e) => console.warn("[Camera] autoplay blocked:", e));
+    }
+  }, []);
 
   useEffect(() => {
     if (!hydrated) {
@@ -237,27 +256,126 @@ export default function VerificationPage() {
   }, [hydrated, token, router]);
 
   useEffect(() => {
+    // ── Stream teardown ───────────────────────────────────────────────────
+    const stopStream = () => {
+      if (streamRef.current) {
+        console.log("STREAM_STOPPED");
+        streamRef.current.getTracks().forEach((t) => t.stop());
+        streamRef.current = null;
+      }
+      if (videoRef.current) {
+        videoRef.current.srcObject = null;
+      }
+    };
+
     if (!cameraOn) {
-      streamRef.current?.getTracks().forEach((track) => track.stop());
-      streamRef.current = null;
+      stopStream();
       return;
     }
 
-    navigator.mediaDevices
-      .getUserMedia({ video: true })
-      .then((stream) => {
+    if (!navigator.mediaDevices?.getUserMedia) {
+      toast({
+        title: "Camera not supported",
+        message: "Camera requires a secure (HTTPS) connection or localhost.",
+        variant: "error",
+      });
+      setCameraOn(false);
+      return;
+    }
+
+    // ── Dual guard against React Strict Mode double-invocation ───────────
+    //
+    // React <StrictMode> runs every effect TWICE in development:
+    //   effect-1 → cleanup-1 → effect-2
+    //
+    // Layer 1 — setTimeout(150 ms):
+    //   cleanup-1 calls clearTimeout, cancelling Layer-1's pending timer before
+    //   it fires. Only effect-2's timer fires (once, cleanly).
+    //
+    // Layer 2 — cameraInitLockRef boolean:
+    //   If both timers somehow fire at the same time (e.g. tab suspended/resumed
+    //   causing cleanup to arrive late), the boolean lock ensures only one
+    //   getUserMedia call is active at any time. The lock is acquired before
+    //   getUserMedia, released unconditionally in the finally block, and also
+    //   cleared in the cleanup function so the next mount starts clean.
+    //
+    // The two layers are independent — either one alone would usually suffice,
+    // but both together give a hard guarantee.
+    // ─────────────────────────────────────────────────────────────────────
+    const timerId = setTimeout(async () => {
+      // Layer 2: acquire init lock
+      if (cameraInitLockRef.current) {
+        console.log("CAMERA_INIT_SKIPPED — lock held by another invocation");
+        return;
+      }
+      cameraInitLockRef.current = true;
+
+      console.log("CAMERA_START");
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } },
+        });
+
+        // If cleanup fired while getUserMedia was in flight, discard the
+        // stream and do nothing — the OS will release the hardware lock.
+        if (!cameraInitLockRef.current) {
+          console.log("CAMERA_START — cleanup fired mid-await; discarding obtained stream");
+          stream.getTracks().forEach((t) => t.stop());
+          console.log("STREAM_STOPPED");
+          return;
+        }
+
+        console.log(
+          "STREAM_OBTAINED",
+          stream.getTracks().map((t) => `${t.kind}:${t.label}`).join(", "),
+        );
         streamRef.current = stream;
+
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
+          videoRef.current
+            .play()
+            .then(() => console.log("VIDEO_PLAY_STARTED"))
+            .catch((e) => console.warn("AUTOPLAY_BLOCKED", e));
+        } else {
+          // setVideoRef callback ref will assign srcObject when element mounts
+          console.log("VIDEO_ELEMENT_NOT_MOUNTED_YET — callback ref will assign srcObject");
         }
-      })
-      .catch(() => {
-        toast({ title: "Camera error", message: "Permission denied", variant: "error" });
+      } catch (err: any) {
+        console.error("CAMERA_ERROR_NAME", err.name);
+        console.error("CAMERA_ERROR_MESSAGE", err.message);
+
+        stopStream();
+
+        let message = "Could not access camera.";
+        if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
+          message = "Camera permission denied. Allow it in browser/OS settings and try again.";
+        } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
+          message = "No camera found on this device.";
+        } else if (
+          err.name === "NotReadableError" ||
+          err.name === "TrackStartError" ||
+          err.name === "AbortError"
+        ) {
+          message = "Camera is temporarily unavailable. Refresh the page and try again.";
+        } else if (err.name === "OverconstrainedError") {
+          message = "Camera does not support the required resolution. Try another browser.";
+        } else if (err.name === "SecurityError") {
+          message = "Camera requires a secure (HTTPS) connection.";
+        }
+        toast({ title: "Camera error", message, variant: "error" });
         setCameraOn(false);
-      });
+      } finally {
+        // Always release the lock so the next mount / toggle can proceed
+        cameraInitLockRef.current = false;
+      }
+    }, 150);
 
     return () => {
-      streamRef.current?.getTracks().forEach((track) => track.stop());
+      clearTimeout(timerId);           // Layer 1: cancel pending getUserMedia before it fires
+      cameraInitLockRef.current = false; // Layer 2: release lock so next mount starts clean
+      stopStream();
     };
   }, [cameraOn, toast]);
 
@@ -269,6 +387,39 @@ export default function VerificationPage() {
     const timer = setTimeout(() => setCountdown((current) => current - 1), 1000);
     return () => clearTimeout(timer);
   }, [countdown]);
+
+  /**
+   * Re-encode any image format to JPEG using a canvas.
+   * Handles WebP from Android/Chrome, HEIC from iOS (Safari converts HEIC→JPEG
+   * transparently when loading into an <img>, so this also catches edge cases).
+   * Skips re-encoding if the file is already JPEG to avoid quality loss.
+   */
+  const toJpegFile = (file: File): Promise<File> => {
+    if (file.type === "image/jpeg" || file.type === "image/jpg") {
+      return Promise.resolve(file);
+    }
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const objectUrl = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(objectUrl);
+        const canvas = document.createElement("canvas");
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        canvas.getContext("2d")!.drawImage(img, 0, 0);
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) { reject(new Error("Canvas toBlob returned null")); return; }
+            resolve(new File([blob], "selfie.jpg", { type: "image/jpeg" }));
+          },
+          "image/jpeg",
+          0.92,
+        );
+      };
+      img.onerror = () => { URL.revokeObjectURL(objectUrl); reject(new Error("Could not load image")); };
+      img.src = objectUrl;
+    });
+  };
 
   const uploadFile = async (file: File, type: "student-id" | "selfie") => {
     const formData = new FormData();
@@ -329,7 +480,9 @@ export default function VerificationPage() {
 
   const captureSelfie = async () => {
     const video = videoRef.current;
-    if (!video) {
+    // readyState >= 2 (HAVE_CURRENT_DATA) ensures at least one frame is decoded
+    if (!video || video.readyState < 2 || video.videoWidth === 0 || video.videoHeight === 0) {
+      toast({ title: "Camera not ready", message: "Wait for the camera preview to load, then try again.", variant: "error" });
       return;
     }
 
@@ -337,8 +490,9 @@ export default function VerificationPage() {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     canvas.getContext("2d")?.drawImage(video, 0, 0);
-    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.9));
+    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.92));
     if (!blob) {
+      toast({ title: "Capture failed", message: "Could not capture from camera. Please try again.", variant: "error" });
       return;
     }
 
@@ -621,8 +775,11 @@ export default function VerificationPage() {
               <AnimatePresence>
                 {cameraOn && (
                   <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="mb-4 overflow-hidden rounded-2xl">
-                    <div className="relative">
-                      <video ref={videoRef} autoPlay playsInline className="w-full rounded-2xl" />
+                    {/* aspect-[4/3] gives the container a defined height before the stream
+                        loads — without it Framer Motion measures 0px and animates 0→0,
+                        keeping the video permanently invisible (overflow-hidden + height 0). */}
+                    <div className="relative aspect-[4/3] w-full bg-black/40 rounded-2xl">
+                      <video ref={setVideoRef} autoPlay playsInline muted className="absolute inset-0 h-full w-full rounded-2xl object-cover" />
                       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
                         <div className="h-52 w-40 rounded-[50%] border-2 border-dashed border-[#FF2D78]/60" />
                       </div>
@@ -661,13 +818,16 @@ export default function VerificationPage() {
                   <UploadCard
                     label="Upload Selfie"
                     sublabel="Make sure your face is clearly visible"
-                    accept="image/*"
+                    accept="image/jpeg,image/jpg,image/png,image/webp,image/heic,image/heif"
                     uploading={uploadingSelfie}
                     uploaded={!!selfieUrl}
-                    onFile={async (file) => {
+                    onFile={async (rawFile) => {
                       try {
                         setUploadingSelfie(true);
-                        const url = await uploadFile(file, "selfie");
+                        // Re-encode any format (HEIC, WebP, PNG) to JPEG before upload
+                        // so Rekognition always receives a supported image format.
+                        const jpegFile = await toJpegFile(rawFile);
+                        const url = await uploadFile(jpegFile, "selfie");
                         setSelfieUrl(url);
                         toast({ title: "Selfie verified!", variant: "success" });
                         setTimeout(() => setStep(3), 700);

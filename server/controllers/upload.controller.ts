@@ -4,7 +4,7 @@ import { saveGalleryImage, saveProfileImage, saveSelfieVerification, saveStudent
 import { AuthRequest } from "../middleware/auth.middleware";
 import { User } from "../models/User";
 import { validateStudentId } from "../services/ocr.service";
-import { detectFaceInSelfie, detectFaceInStudentId } from "../services/faceDetect.service";
+import { detectFaceInSelfie, detectFaceInStudentId, normalizeImageBuffer } from "../services/faceDetect.service";
 
 const extOf = (name: string) => path.extname(name).replace(".", "") || "jpg";
 
@@ -36,8 +36,9 @@ export const uploadStudentId = async (req: Request, res: Response) => {
     return res.status(422).json({ success: false, message: faceResult.reason });
   }
 
-  // ── 3. All checks passed — persist file ──────────────────────────────
-  const saved = await saveStudentId(file.buffer, extOf(file.originalname));
+  // ── 3. All checks passed — normalise to JPEG and persist ─────────────
+  const jpegBuffer = await normalizeImageBuffer(file.buffer);
+  const saved = await saveStudentId(jpegBuffer, "jpg");
   return res.json({ success: true, message: "Student ID uploaded", data: saved });
 };
 
@@ -60,8 +61,9 @@ export const uploadSelfie = async (req: Request, res: Response) => {
     return res.status(422).json({ success: false, message: faceResult.reason });
   }
 
-  // ── 2. All checks passed — persist file ──────────────────────────────
-  const saved = await saveSelfieVerification(file.buffer, extOf(file.originalname));
+  // ── 2. All checks passed — normalise to JPEG and persist ─────────────
+  const jpegBuffer = await normalizeImageBuffer(file.buffer);
+  const saved = await saveSelfieVerification(jpegBuffer, "jpg");
   return res.json({ success: true, message: "Selfie uploaded", data: saved });
 };
 
